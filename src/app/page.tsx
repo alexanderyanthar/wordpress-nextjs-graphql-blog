@@ -1,7 +1,17 @@
-import { Button } from "@/components/ui/button" 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+'use client';
+import { useQuery } from '@apollo/client';
+import { GET_POSTS } from '@/lib/graphql/queries';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Home() {
+  const { loading, error, data } = useQuery(GET_POSTS, {
+    variables: { first: 3 }
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
     <main className="container mx-auto py-8">
       <div className="space-y-8">
@@ -9,14 +19,21 @@ export default function Home() {
         
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>shadcn/ui Test</CardTitle>
-            <CardDescription>Testing our component library setup</CardDescription>
+            <CardTitle>GraphQL Test</CardTitle>
+            <CardDescription>Posts from WordPress via GraphQL</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button>Click me!</Button>
+            <div className="space-y-2">
+              {data?.posts?.nodes?.map((post: any) => (
+                <div key={post.id} className="p-2 border rounded">
+                  <h3 className="font-semibold">{post.title}</h3>
+                  <p className="text-sm text-gray-600">{post.slug}</p>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
     </main>
-  )
+  );
 }
