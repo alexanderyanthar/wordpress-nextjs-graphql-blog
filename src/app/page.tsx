@@ -1,11 +1,10 @@
 'use client';
-import { useQuery } from '@apollo/client';
-import { GET_POSTS } from '@/lib/graphql/queries';
+import { useGetPostsQuery } from '@/types/generated/graphql';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Home() {
-  const { loading, error, data } = useQuery(GET_POSTS, {
+  const { loading, error, data } = useGetPostsQuery({
     variables: { first: 3 }
   });
 
@@ -19,15 +18,15 @@ export default function Home() {
         
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>GraphQL Test</CardTitle>
-            <CardDescription>Posts from WordPress via GraphQL</CardDescription>
+            <CardTitle>GraphQL Code Generation Test</CardTitle>
+            <CardDescription>Typed posts from WordPress via GraphQL</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {data?.posts?.nodes?.map((post: any) => (
-                <div key={post.id} className="p-2 border rounded">
-                  <h3 className="font-semibold">{post.title}</h3>
-                  <p className="text-sm text-gray-600">{post.slug}</p>
+              {data?.posts?.nodes?.map((post) => (
+                <div key={post?.id} className="p-2 border rounded">
+                  <h3 className="font-semibold">{post?.title}</h3>
+                  <p className="text-sm text-gray-600">{post?.slug}</p>
                 </div>
               ))}
             </div>
