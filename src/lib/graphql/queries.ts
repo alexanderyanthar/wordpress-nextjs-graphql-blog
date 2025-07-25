@@ -1,38 +1,125 @@
 import { gql } from '@apollo/client';
+import { 
+  POST_FIELDS, 
+  POST_CONTENT_FIELDS,
+  CATEGORY_FIELDS,
+  TAG_FIELDS,
+  AUTHOR_FIELDS,
+  FEATURED_IMAGE_FIELDS 
+} from './fragments';
+
+// Get posts with essential fields
 export const GET_POSTS = gql`
-  query GetPosts($first: Int = 10) {
-    posts(first: $first) {
+  ${POST_FIELDS}
+  ${CATEGORY_FIELDS}
+  ${TAG_FIELDS}
+  
+  query GetPosts($first: Int = 10, $after: String) {
+    posts(first: $first, after: $after) {
       nodes {
-        id
-        title
-        excerpt
-        slug
-        date
+        ...PostFields
         categories {
           nodes {
-            name
-            slug
+            ...CategoryFields
           }
+        }
+        tags {
+          nodes {
+            ...TagFields
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
+
+// Get single post by slug with full content
+export const GET_POST_BY_SLUG = gql`
+  ${POST_CONTENT_FIELDS}
+  ${CATEGORY_FIELDS}
+  ${TAG_FIELDS}
+  ${AUTHOR_FIELDS}
+  ${FEATURED_IMAGE_FIELDS}
+  
+  query GetPostBySlug($slug: String!) {
+    postBy(slug: $slug) {
+      ...PostContentFields
+      author {
+        node {
+          ...AuthorFields
+        }
+      }
+      featuredImage {
+        node {
+          ...FeaturedImageFields
+        }
+      }
+      categories {
+        nodes {
+          ...CategoryFields
+        }
+      }
+      tags {
+        nodes {
+          ...TagFields
         }
       }
     }
   }
 `;
 
-export const GET_POST_BY_SLUG = gql`
-  query GetPostBySlug($slug: String!) {
-    postBy(slug: $slug) {
-      id
-      title
-      content
-      excerpt
-      slug
-      date
-      categories {
-        nodes {
-          name
-          slug
+// Get all categories
+export const GET_CATEGORIES = gql`
+  ${CATEGORY_FIELDS}
+  
+  query GetCategories($first: Int = 100) {
+    categories(first: $first) {
+      nodes {
+        ...CategoryFields
+      }
+    }
+  }
+`;
+
+// Get all tags
+export const GET_TAGS = gql`
+  ${TAG_FIELDS}
+  
+  query GetTags($first: Int = 100) {
+    tags(first: $first) {
+      nodes {
+        ...TagFields
+      }
+    }
+  }
+`;
+
+// Search posts
+export const SEARCH_POSTS = gql`
+  ${POST_FIELDS}
+  ${CATEGORY_FIELDS}
+  
+  query SearchPosts($search: String!, $first: Int = 10, $after: String) {
+    posts(first: $first, after: $after, where: { search: $search }) {
+      nodes {
+        ...PostFields
+        categories {
+          nodes {
+            ...CategoryFields
+          }
         }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
       }
     }
   }
