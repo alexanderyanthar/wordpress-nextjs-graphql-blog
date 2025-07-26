@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PostList } from '@/components/posts/PostList';
 import { SearchInput } from '@/components/posts/SearchInput';
@@ -9,22 +9,57 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 import { useCategories } from '@/lib/graphql/hooks';
+import { useAdvancedSearch } from '@/lib/graphql/search-hooks'; // ADDED: Import the search hook
 import { TransformedPost } from '@/lib/graphql/transformers';
 
 export default function Home() {
   const { categories, loading: categoriesLoading } = useCategories();
-  const [searchResults, setSearchResults] = useState<TransformedPost[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [quickSearchResults, setQuickSearchResults] = useState<TransformedPost[]>([]);
+  const [isQuickSearching, setIsQuickSearching] = useState(false);
 
-  const handleSearchResults = (results: TransformedPost[]) => {
-    setSearchResults(results);
-    setIsSearching(results.length > 0);
+  // ADDED: Use the search hook for category filtering
+  const {
+    selectedCategories,
+    searchResults: categoryFilteredResults,
+    loading: categoryLoading,
+    hasActiveFilters: hasCategoryFilter,
+    toggleCategory,
+    clearSearch: clearCategoryFilter,
+  } = useAdvancedSearch({
+    enableSuggestions: false, // Don't need suggestions for category filtering
+  });
+
+  const handleQuickSearchResults = (results: TransformedPost[]) => {
+    setQuickSearchResults(results);
+    setIsQuickSearching(results.length > 0);
   };
 
-  const clearSearch = () => {
-    setIsSearching(false);
-    setSearchResults([]);
+  const clearQuickSearch = () => {
+    setIsQuickSearching(false);
+    setQuickSearchResults([]);
   };
+
+  // FIXED: Now this actually calls the search hook's toggleCategory
+  const handleCategoryClick = (categoryDatabaseId: number) => {
+    
+    // Clear quick search when selecting category
+    if (isQuickSearching) {
+      clearQuickSearch();
+    }
+    
+    // Use the search hook's toggleCategory function
+    toggleCategory(categoryDatabaseId);
+  };
+
+  // Get selected category name for display
+  const selectedCategory = selectedCategories.length > 0 
+    ? categories.find(c => c.databaseId === selectedCategories[0])
+    : null;
+
+  // Determine what to show
+  const showQuickSearch = isQuickSearching;
+  const showCategoryFilter = hasCategoryFilter && !isQuickSearching;
+  const showLatestPosts = !showQuickSearch && !showCategoryFilter;
 
   return (
     <main className="container mx-auto py-8">
@@ -40,7 +75,7 @@ export default function Home() {
           {/* Quick Search */}
           <div className="max-w-md mx-auto mb-4">
             <SearchInput 
-              onSearchResults={handleSearchResults}
+              onSearchResults={handleQuickSearchResults}
               placeholder="Quick search..."
               showFilters={false}
             />
@@ -54,11 +89,18 @@ export default function Home() {
           </Link>
         </div>
         
-        {/* Categories Section */}
+        {/* Categories Section - FIXED: Now connected to search hook */}
         <Card>
           <CardHeader>
             <CardTitle>Browse by Category</CardTitle>
-            <CardDescription>Click on a category to filter posts</CardDescription>
+            <CardDescription>
+              Click on a category to filter posts
+              {selectedCategory && (
+                <span className="text-blue-600 font-medium">
+                  {' '} • Currently showing: {selectedCategory.name}
+                </span>
+              )}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -68,25 +110,49 @@ export default function Home() {
                 categories.map((category) => (
                   <Badge
                     key={category.id}
-                    variant="outline"
+                    variant={selectedCategories.includes(category.databaseId) ? "default" : "outline"}
                     className="cursor-pointer hover:bg-gray-100 transition-colors"
+                    onClick={() => handleCategoryClick(category.databaseId)} // FIXED: Connected to search hook
                   >
                     {category.name} ({category.count})
                   </Badge>
                 ))
               )}
             </div>
+            
+            {/* Clear category button */}
+            {selectedCategory && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => clearCategoryFilter()} // FIXED: Use search hook's clear function
+                className="mt-3"
+              >
+                Clear Category Filter
+              </Button>
+            )}
           </CardContent>
         </Card>
         
-        {/* Content Section - Search Results or Latest Posts */}
+        {/* Content Section - UPDATED: Show different content based on state */}
         <div>
-          {isSearching ? (
-            <SearchResultsSection 
-              searchResults={searchResults}
-              onClearSearch={clearSearch}
+          {showQuickSearch && (
+            <QuickSearchResultsSection 
+              searchResults={quickSearchResults}
+              onClearSearch={clearQuickSearch}
             />
-          ) : (
+          )}
+          
+          {showCategoryFilter && (
+            <CategoryFilteredSection 
+              categoryName={selectedCategory?.name || ''}
+              searchResults={categoryFilteredResults}
+              loading={categoryLoading}
+              onClearCategory={clearCategoryFilter}
+            />
+          )}
+          
+          {showLatestPosts && (
             <LatestPostsSection />
           )}
         </div>
@@ -96,8 +162,8 @@ export default function Home() {
   );
 }
 
-// Extracted Search Results Component
-function SearchResultsSection({ 
+// Quick search results component
+function QuickSearchResultsSection({ 
   searchResults, 
   onClearSearch 
 }: { 
@@ -124,7 +190,44 @@ function SearchResultsSection({
   );
 }
 
-// Extracted Latest Posts Component
+// UPDATED: Category filtered section using search hook results
+function CategoryFilteredSection({ 
+  categoryName,
+  searchResults,
+  loading,
+  onClearCategory 
+}: { 
+  categoryName: string;
+  searchResults: TransformedPost[];
+  loading: boolean;
+  onClearCategory: () => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">
+          Posts in "{categoryName}" ({searchResults.length})
+        </h2>
+        <Button variant="outline" onClick={onClearCategory}>
+          Clear Category Filter
+        </Button>
+      </div>
+      
+      {/* Show results from search hook, not PostList */}
+      {loading ? (
+        <div className="text-center py-8">Loading posts...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {searchResults.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Latest posts component (unchanged)
 function LatestPostsSection() {
   return (
     <div>
@@ -137,7 +240,7 @@ function LatestPostsSection() {
   );
 }
 
-// Extracted Post Card Component
+// Post card component (unchanged)
 function PostCard({ post }: { post: TransformedPost }) {
   return (
     <Card className="hover:shadow-lg transition-shadow">

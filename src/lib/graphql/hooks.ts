@@ -1,5 +1,5 @@
 import { useGetCategoriesQuery } from '@/types/generated/graphql';
-import { transformCategories } from './transformers';
+import { transformCategories, transformCategory } from './transformers';
 
 // Custom hook for categories with caching
 export const useCategories = () => {

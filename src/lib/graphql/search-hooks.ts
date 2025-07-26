@@ -69,13 +69,6 @@ export const useAdvancedSearch = (options: UseSearchOptions = {}) => {
 
     const shouldSearch = Object.keys(searchVars).length > 1; // more than just 'first'
 
-    // Add debug logs
-    console.log('[useAdvancedSearch] useEffect trigger:');
-    console.log('  debouncedSearchTerm:', debouncedSearchTerm);
-    console.log('  selectedCategories:', selectedCategories);
-    console.log('  selectedTags:', selectedTags);
-    console.log('  searchVars:', searchVars);
-
     if (shouldSearch) {
       setIsSearchActive(true);
       executeSearch({ variables: searchVars });

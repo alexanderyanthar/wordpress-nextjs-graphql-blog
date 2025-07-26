@@ -145,7 +145,7 @@ function PostCard({ post }: { post: TransformedPost }) {
       
       <div className="p-6">
         <div className="flex flex-wrap gap-1 mb-3">
-          {post.categoryNames.slice(0, 2).map((category) => (
+          {post.categoryNames.map((category) => (
             <Badge key={category} variant="secondary" className="text-xs">
               {category}
             </Badge>
