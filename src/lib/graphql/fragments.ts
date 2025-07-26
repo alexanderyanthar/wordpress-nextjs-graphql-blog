@@ -29,6 +29,7 @@ export const POST_CONTENT_FIELDS = gql`
 export const CATEGORY_FIELDS = gql`
   fragment CategoryFields on Category {
     id
+    databaseId
     name
     slug
     count

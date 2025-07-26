@@ -20,6 +20,7 @@ export const transformPost = (post: any): TransformedPost => {
   const categoryNames = post?.categories?.nodes?.map((cat: any) => cat.name) || [];
   const tagNames = post?.tags?.nodes?.map((tag: any) => tag.name) || [];
   const featuredImageUrl = post?.featuredImage?.node?.sourceUrl;
+  
 
   return {
     id: post.id,
@@ -40,6 +41,7 @@ export const transformPost = (post: any): TransformedPost => {
 // Transform category for display
 export interface TransformedCategory {
   id: string;
+  databaseId: number;
   name: string;
   slug: string;
   count: number;
@@ -49,6 +51,7 @@ export interface TransformedCategory {
 export const transformCategory = (category: any): TransformedCategory => {
   return {
     id: category.id || '',
+    databaseId: category.databaseId || 0,
     name: category.name || '',
     slug: category.slug || '',
     count: category.count || 0,

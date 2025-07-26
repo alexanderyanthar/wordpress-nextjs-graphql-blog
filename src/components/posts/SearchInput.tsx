@@ -58,6 +58,7 @@ export function SearchInput({
 
   const { categories } = useCategories();
 
+
   // Update parent component with results
   useEffect(() => {
     onSearchResults?.(searchResults);
@@ -176,7 +177,6 @@ export function SearchInput({
                     variant={selectedCategories.includes(category.databaseId) ? "default" : "outline"}
                     className="cursor-pointer hover:bg-gray-100"
                     onClick={() => {
-                      console.log('Badge click:', { selectedCategories, databaseId: category.databaseId });
                       toggleCategory(category.databaseId);
                     }}
                   >

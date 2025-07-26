@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { usePaginatedPosts, useInfiniteScroll } from '@/lib/graphql/pagination-hooks';
+import { useLoadingState } from '@/lib/graphql/loading-hooks';
+import { GraphQLError } from '@/components/errors/GraphQLError';
+import { PostSkeletons } from '@/components/loading/PostSkeletons';
 import { TransformedPost } from '@/lib/graphql/transformers';
 
 interface PostListProps {
@@ -30,6 +32,7 @@ export function PostList({
     hasNextPage,
     isLoadingMore,
     loadMorePosts,
+    resetPagination,
   } = usePaginatedPosts({
     pageSize,
     categoryId,
@@ -37,6 +40,8 @@ export function PostList({
     search,
   });
 
+  const loadingState = useLoadingState(loading, error, posts, isLoadingMore);
+  
   const { handleScroll, resetFetching } = useInfiniteScroll(
     loadMorePosts,
     hasNextPage,
@@ -58,67 +63,58 @@ export function PostList({
     }
   }, [isLoadingMore, resetFetching]);
 
-  if (error) {
+  // Error state
+  if (loadingState.isError && error) {
     return (
-      <Card className="border-red-200">
-        <CardHeader>
-          <CardTitle className="text-red-600">Error Loading Posts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-red-700">{error.message}</p>
-          <Button 
-            onClick={() => window.location.reload()} 
-            className="mt-4"
-            variant="outline"
-          >
-            Try Again
-          </Button>
-        </CardContent>
-      </Card>
+      <GraphQLError 
+        error={error}
+        onRetry={resetPagination}
+      />
     );
   }
 
   return (
     <div className="space-y-6">
+      
       {/* Posts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-        
-        {/* Loading Skeletons */}
-        {(loading || isLoadingMore) && (
-          <>
-            {[...Array(pageSize)].map((_, i) => (
-              <PostCardSkeleton key={`skeleton-${i}`} />
-            ))}
-          </>
-        )}
-      </div>
+      {loadingState.isLoading ? (
+        <PostSkeletons count={pageSize} variant="card" />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      )}
 
-      {/* Load More Button (if not using infinite scroll) */}
-      {!enableInfiniteScroll && hasNextPage && (
+      {/* Loading More Skeletons */}
+      {loadingState.isLoadingMore && (
+        <PostSkeletons count={3} variant="card" />
+      )}
+
+      {/* Load More Button */}
+      {!enableInfiniteScroll && hasNextPage && !loadingState.isLoading && (
         <div className="flex justify-center">
           <Button
             onClick={loadMorePosts}
-            disabled={isLoadingMore}
+            disabled={loadingState.isLoadingMore}
             variant="outline"
             size="lg"
           >
-            {isLoadingMore ? 'Loading...' : 'Load More Posts'}
+            {loadingState.isLoadingMore ? 'Loading...' : 'Load More Posts'}
           </Button>
         </div>
       )}
 
-      {/* No More Posts Message */}
+      {/* End of Posts Message */}
       {!hasNextPage && posts.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500">You've reached the end of the posts!</p>
         </div>
       )}
 
-      {/* No Posts Found */}
-      {!loading && posts.length === 0 && (
+      {/* Empty State */}
+      {loadingState.isEmpty && (
         <Card>
           <CardContent className="text-center py-12">
             <p className="text-gray-500 text-lg">No posts found.</p>
@@ -128,11 +124,12 @@ export function PostList({
           </CardContent>
         </Card>
       )}
+      
     </div>
   );
 }
 
-// Individual Post Card Component
+// Post Card Component
 function PostCard({ post }: { post: TransformedPost }) {
   return (
     <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
@@ -145,52 +142,32 @@ function PostCard({ post }: { post: TransformedPost }) {
           />
         </div>
       )}
-      <CardHeader>
-        <div className="flex flex-wrap gap-1 mb-2">
-          {post.categoryNames.slice(0, 2).map((category) => (
+      
+      <div className="p-6">
+        <div className="flex flex-wrap gap-1 mb-3">
+          {post.categoryNames.map((category) => (
             <Badge key={category} variant="secondary" className="text-xs">
               {category}
             </Badge>
           ))}
         </div>
-        <CardTitle className="text-lg line-clamp-2 hover:text-blue-600 transition-colors">
+        
+        <h3 className="text-lg font-semibold line-clamp-2 mb-2 hover:text-blue-600 transition-colors">
           {post.title}
-        </CardTitle>
-        <CardDescription>
+        </h3>
+        
+        <p className="text-sm text-gray-600 mb-3">
           {post.formattedDate} • {post.readingTime} min read
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
+        
         <p className="text-sm text-gray-700 line-clamp-3 mb-4">
           {post.plainTextExcerpt}
         </p>
+        
         <Button variant="outline" size="sm" className="w-full">
           Read More
         </Button>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Loading Skeleton Component
-function PostCardSkeleton() {
-  return (
-    <Card>
-      <div className="aspect-video">
-        <Skeleton className="w-full h-full rounded-t-lg" />
       </div>
-      <CardHeader>
-        <div className="flex gap-2 mb-2">
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-4 w-20" />
-        </div>
-        <Skeleton className="h-5 w-full mb-2" />
-        <Skeleton className="h-4 w-3/4" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-16 w-full mb-4" />
-        <Skeleton className="h-8 w-full" />
-      </CardContent>
     </Card>
   );
 }
