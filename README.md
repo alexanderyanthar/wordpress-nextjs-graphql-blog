@@ -20,6 +20,46 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Component Structure
+
+### Phase 4: shadcn/ui Component Library
+
+```
+/src/components/
+├── ui/                 # shadcn/ui components
+│   ├── alert.tsx
+│   ├── badge.tsx
+│   ├── button.tsx
+│   ├── card.tsx
+│   ├── input.tsx
+│   ├── navigation-menu.tsx
+│   └── skeleton.tsx
+├── layout/             # Layout components (Phase 4)
+│   ├── Header.tsx      # (upcoming)
+│   └── Footer.tsx      # (upcoming)
+└── posts/              # Post-related components
+    ├── postlist/
+    ├── searchinput/
+    └── searchresults/
+
+/src/lib/utils/         # Component utilities (Phase 4)
+/src/hooks/             # Custom hooks (Phase 4)
+/src/constants/         # Component constants (Phase 4)
+```
+
+## shadcn/ui Setup
+
+This project uses shadcn/ui for the component library with the following configuration:
+- TypeScript support
+- Tailwind CSS integration
+- Components located in `src/components/ui/`
+- Utility functions in `src/lib/utils.ts`
+
+### Adding new shadcn/ui components:
+```bash
+npx shadcn-ui@latest add [component-name]
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
