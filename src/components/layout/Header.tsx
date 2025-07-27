@@ -43,6 +43,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet } from "@/components/ui/sheet"
 import { NavigationMenu } from "@/components/ui/navigation-menu"
 import { Menu } from "lucide-react"
+import Link from "next/link"
 
 interface HeaderProps {
   // Props will be added as we build the component
@@ -54,7 +55,14 @@ export default function Header({}: HeaderProps) {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Simple test content */}
-          <div>Logo</div>
+            <div className="flex items-center space-x-2">
+                <Link 
+                href="/" 
+                className="text-xl md:text-2xl font-bold text-foreground hover:text-primary hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1"
+            >
+                    Your Blog Name
+                </Link>
+            </div>
           <div>Navigation Menu</div>
           <Button variant="outline" size="sm">
             <Menu className="h-4 w-4" />
