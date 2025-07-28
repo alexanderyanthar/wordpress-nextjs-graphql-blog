@@ -39,11 +39,18 @@
  * 4. Clean, uncluttered design
  */
 
-import { Button } from "@/components/ui/button"
-import { Sheet } from "@/components/ui/sheet"
-import { NavigationMenu } from "@/components/ui/navigation-menu"
-import { Menu } from "lucide-react"
+import { useState } from "react"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetTrigger 
+} from "@/components/ui/sheet"
+import { NavigationMenu } from "@/components/ui/navigation-menu"
+import { Menu, X } from "lucide-react"
 
 interface HeaderProps {
   // Props will be added as we build the component
@@ -58,35 +65,94 @@ const navigationItems = [
 ]
 
 export default function Header({}: HeaderProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  console.log('Mobile menu state:', isMobileMenuOpen)
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Simple test content */}
-            <div className="flex items-center space-x-2">
-                <Link 
-                href="/" 
-                className="text-xl md:text-2xl font-bold text-foreground hover:text-primary hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1"
+          {/* Logo section */}
+          <div className="flex items-center space-x-2">
+            <Link 
+              href="/" 
+              className="text-xl md:text-2xl font-bold text-foreground hover:text-primary hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1"
             >
-                    Your Blog Name
+              Your Blog Name
+            </Link>
+          </div>
+  
+          {/* Desktop Navigation */}
+          <NavigationMenu className="hidden md:flex">
+            <nav className="flex items-center space-x-1">
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                >
+                  {item.name}
                 </Link>
-            </div>
-            {/* Desktop Navigation */}
-            <NavigationMenu className="hidden md:flex">
-              <nav className="flex items-center space-x-1">
+              ))}
+            </nav>
+          </NavigationMenu>
+  
+          {/* Mobile Navigation Sheet */}
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetContent 
+              side="right" 
+              className="w-[300px] sm:w-[400px]"
+              aria-labelledby="mobile-menu-title"
+              aria-describedby="mobile-menu-description"
+            >
+              <SheetHeader>
+                <SheetTitle id="mobile-menu-title">
+                  Navigation Menu
+                </SheetTitle>
+                <p id="mobile-menu-description" className="sr-only">
+                  Main navigation menu for mobile devices
+                </p>
+              </SheetHeader>
+              <nav 
+                className="flex flex-col space-y-4 mt-6"
+                role="navigation"
+                aria-label="Mobile navigation"
+              >
                 {navigationItems.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    role="menuitem"
                   >
                     {item.name}
                   </Link>
                 ))}
               </nav>
-            </NavigationMenu>
-          <Button variant="outline" size="sm">
+            </SheetContent>
+          </Sheet>
+  
+          {/* Mobile menu button */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="md:hidden"
+            onClick={toggleMobileMenu}
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
+            aria-haspopup="true"
+          >
             <Menu className="h-4 w-4" />
+            <span className="sr-only">
+              {isMobileMenuOpen ? "Close menu" : "Open menu"}
+            </span>
           </Button>
         </div>
       </div>
