@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PostList } from '@/components/posts/PostList';
+import PostCard from '@/components/posts/PostCard';
 import { SearchInput } from '@/components/posts/SearchInput';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 import { useCategories } from '@/lib/graphql/hooks';
 import { useAdvancedSearch } from '@/lib/graphql/search-hooks'; // ADDED: Import the search hook
-import { TransformedPost } from '@/lib/graphql/transformers';
+import { TransformedPost, transformPost } from '@/lib/graphql/transformers';
 
 export default function Home() {
   const { categories, loading: categoriesLoading } = useCategories();
@@ -242,30 +243,3 @@ function LatestPostsSection() {
   );
 }
 
-// Post card component (unchanged)
-function PostCard({ post }: { post: TransformedPost }) {
-  return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <CardTitle className="text-lg line-clamp-2">
-          {post.title}
-        </CardTitle>
-        <CardDescription>
-          {post.formattedDate} • {post.readingTime} min read
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-gray-700 line-clamp-3 mb-3">
-          {post.plainTextExcerpt}
-        </p>
-        <div className="flex flex-wrap gap-1">
-          {post.categoryNames.map((categoryName) => (
-            <Badge key={categoryName} variant="outline" className="text-xs">
-              {categoryName}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
