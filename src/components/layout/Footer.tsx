@@ -25,52 +25,88 @@
  * - shadcn/ui components where appropriate
  */
 
+import Link from "next/link"
 import { Mail, Github, Twitter, Linkedin, Facebook } from "lucide-react"
+
+// Footer navigation items
+const footerNavItems = [
+    { name: 'Privacy Policy', href: '/privacy' },
+    { name: 'Terms of Service', href: '/terms' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'About', href: '/about' },
+  ]
+
+// Social media links
+const socialLinks = [
+    { name: 'Email', href: 'mailto:hello@yourblog.com', icon: Mail },
+    { name: 'GitHub', href: 'https://github.com/yourusername', icon: Github },
+    { name: 'Twitter', href: 'https://twitter.com/yourusername', icon: Twitter },
+    { name: 'LinkedIn', href: 'https://linkedin.com/in/yourusername', icon: Linkedin },
+    { name: 'Facebook', href: 'https://facebook.com/yourusername', icon: Facebook },
+  ]
 
 interface FooterProps {
     // Props will be added as we build the component
   }
   
-  export default function Footer({}: FooterProps) {
+export default function Footer({}: FooterProps) {
     return (
-      <footer className="border-t bg-background">
+        <footer className="border-t bg-background">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Footer Navigation Links Section */}
             <div>
-              <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
-              <div className="space-y-2">
-                {/* Navigation links will go here */}
-                <div className="text-sm text-muted-foreground">Privacy Policy</div>
-                <div className="text-sm text-muted-foreground">Terms of Service</div>
-                <div className="text-sm text-muted-foreground">Contact</div>
-                <div className="text-sm text-muted-foreground">About</div>
-              </div>
+                <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
+                <div className="space-y-2">
+                    {footerNavItems.map((item) => (
+                        <Link
+                        key={item.name}
+                        href={item.href}
+                        className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                        {item.name}
+                        </Link>
+                    ))}
+                </div>
             </div>
-  
+
             {/* Social Media Section */}
-            <div>
-              <h3 className="font-semibold text-foreground mb-4">Connect</h3>
-              <div className="flex space-x-4">
-                {/* Social icons will be enhanced here */}
-                <Mail className="h-5 w-5 text-muted-foreground" />
-                <Github className="h-5 w-5 text-muted-foreground" />
-                <Twitter className="h-5 w-5 text-muted-foreground" />
-                <Facebook className="h-5 w-5 text-muted-foreground" />
-                <Linkedin className="h-5 w-5 text-muted-foreground" />
-              </div>
+            <div className="flex space-x-4">
+                {socialLinks.map((social) => {
+                    const IconComponent = social.icon
+                    return (
+                    <Link
+                        key={social.name}
+                        href={social.href}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label={social.name}
+                        target={social.href.startsWith('http') ? '_blank' : undefined}
+                        rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    >
+                        <IconComponent className="h-5 w-5" />
+                    </Link>
+                    )
+                })}
             </div>
-  
+
             {/* Copyright Section */}
             <div>
-              <h3 className="font-semibold text-foreground mb-4">Info</h3>
-              <div className="text-sm text-muted-foreground">
-                <div>© 2025 Your Blog Name</div>
-                <div className="mt-2">All rights reserved</div>
-              </div>
+                <h3 className="font-semibold text-foreground mb-4">Info</h3>
+                <div className="text-sm text-muted-foreground">
+                    <div>© {new Date().getFullYear()} Your Blog Name</div>
+                    <div className="mt-2">All rights reserved</div>
+                    <div className="mt-2">
+                        <Link 
+                        href="/sitemap" 
+                        className="hover:text-foreground transition-colors"
+                        >
+                        Sitemap
+                        </Link>
+                    </div>
+                </div>
             </div>
-          </div>
+            </div>
         </div>
-      </footer>
+        </footer>
     )
-  }
+}
