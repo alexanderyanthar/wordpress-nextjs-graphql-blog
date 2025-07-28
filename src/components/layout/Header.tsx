@@ -49,6 +49,14 @@ interface HeaderProps {
   // Props will be added as we build the component
 }
 
+// Navigation items configuration
+const navigationItems = [
+  { name: 'Home', href: '/' },
+  { name: 'Posts', href: '/posts' },
+  { name: 'Categories', href: '/categories' },
+  { name: 'About', href: '/about' },
+]
+
 export default function Header({}: HeaderProps) {
   return (
     <header className="border-b">
@@ -63,7 +71,20 @@ export default function Header({}: HeaderProps) {
                     Your Blog Name
                 </Link>
             </div>
-          <div>Navigation Menu</div>
+            {/* Desktop Navigation */}
+            <NavigationMenu className="hidden md:flex">
+              <nav className="flex items-center space-x-1">
+                {navigationItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent hover:bg-opacity-50 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
+            </NavigationMenu>
           <Button variant="outline" size="sm">
             <Menu className="h-4 w-4" />
           </Button>
