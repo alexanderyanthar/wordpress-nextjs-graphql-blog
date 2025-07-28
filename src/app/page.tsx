@@ -11,7 +11,6 @@ import { Search } from "lucide-react";
 import { useCategories } from '@/lib/graphql/hooks';
 import { useAdvancedSearch } from '@/lib/graphql/search-hooks'; // ADDED: Import the search hook
 import { TransformedPost } from '@/lib/graphql/transformers';
-import Header from "@/components/layout/Header"
 
 export default function Home() {
   const { categories, loading: categoriesLoading } = useCategories();
@@ -64,7 +63,6 @@ export default function Home() {
 
   return (
     <>
-    <Header />
     <main className="container mx-auto py-8">
       <div className="space-y-8">
         

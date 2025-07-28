@@ -38,8 +38,9 @@
  * 3. Theme toggle easily accessible
  * 4. Clean, uncluttered design
  */
+"use client"
 
-import { useState } from "react"
+import { useState, memo, useCallback } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { 
@@ -64,14 +65,12 @@ const navigationItems = [
   { name: 'About', href: '/about' },
 ]
 
-export default function Header({}: HeaderProps) {
+function Header({}: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  console.log('Mobile menu state:', isMobileMenuOpen)
-
-  const toggleMobileMenu = () => {
+  const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+  }, [isMobileMenuOpen])
 
   return (
     <header className="border-b">
@@ -159,3 +158,6 @@ export default function Header({}: HeaderProps) {
     </header>
   )
 }
+
+export default memo(Header)
+
