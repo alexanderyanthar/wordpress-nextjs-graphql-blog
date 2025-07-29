@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/sheet"
 import { NavigationMenu } from "@/components/ui/navigation-menu"
 import { Menu, X } from "lucide-react"
+import { ThemeToggle } from "../theme-toggle"
 
 interface HeaderProps {
   // Props will be added as we build the component
@@ -100,6 +101,11 @@ function Header({}: HeaderProps) {
               ))}
             </nav>
           </NavigationMenu>
+
+          {/* Theme Toggle */}
+          <div className="hidden md:flex">
+            <ThemeToggle />
+          </div>
   
           {/* Mobile Navigation Sheet */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -133,6 +139,13 @@ function Header({}: HeaderProps) {
                     {item.name}
                   </Link>
                 ))}
+                  {/* Theme toggle in mobile menu */}
+                <div className="pt-4 border-t">
+                  <div className="flex items-center justify-between px-4">
+                    <span className="text-sm text-muted-foreground">Theme</span>
+                    <ThemeToggle />
+                  </div>
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
