@@ -45,11 +45,8 @@ const socialLinks = [
     { name: 'Facebook', href: 'https://facebook.com/yourusername', icon: Facebook },
   ]
 
-interface FooterProps {
-    // Props will be added as we build the component
-  }
   
-export default function Footer({}: FooterProps) {
+export default function Footer() {
     return (
         <footer className="border-t bg-muted/50">
             <div className="container mx-auto px-4 py-12">

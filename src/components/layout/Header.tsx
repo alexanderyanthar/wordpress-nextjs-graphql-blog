@@ -47,16 +47,11 @@ import {
   Sheet, 
   SheetContent, 
   SheetHeader, 
-  SheetTitle, 
-  SheetTrigger 
+  SheetTitle
 } from "@/components/ui/sheet"
 import { NavigationMenu } from "@/components/ui/navigation-menu"
-import { Menu, X } from "lucide-react"
+import { Menu } from "lucide-react"
 import { ThemeToggle } from "../theme-toggle"
-
-interface HeaderProps {
-  // Props will be added as we build the component
-}
 
 // Navigation items configuration
 const navigationItems = [
@@ -66,7 +61,7 @@ const navigationItems = [
   { name: 'About', href: '/about' },
 ]
 
-function Header({}: HeaderProps) {
+function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = useCallback(() => {

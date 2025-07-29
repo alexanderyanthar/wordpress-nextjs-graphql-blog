@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { PostList } from '@/components/posts/PostList';
 import PostCard from '@/components/posts/PostCard';
@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 import { useCategories } from '@/lib/graphql/hooks';
 import { useAdvancedSearch } from '@/lib/graphql/search-hooks'; // ADDED: Import the search hook
-import { TransformedPost, transformPost } from '@/lib/graphql/transformers';
+import { TransformedPost } from '@/lib/graphql/transformers';
 
 export default function Home() {
   const { categories, loading: categoriesLoading } = useCategories();
@@ -209,7 +209,7 @@ function CategoryFilteredSection({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">
-          Posts in "{categoryName}" ({searchResults.length})
+          Posts in &quot;{categoryName}&quot; ({searchResults.length})
         </h2>
         <Button variant="outline" onClick={onClearCategory}>
           Clear Category Filter

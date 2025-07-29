@@ -33,7 +33,6 @@ import { useState } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface PostCardProps {
     post: {

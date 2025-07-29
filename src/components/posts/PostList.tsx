@@ -3,13 +3,11 @@
 import { useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import PostCard from './PostCard';
 import { usePaginatedPosts, useInfiniteScroll } from '@/lib/graphql/pagination-hooks';
 import { useLoadingState } from '@/lib/graphql/loading-hooks';
 import { GraphQLError } from '@/components/errors/GraphQLError';
 import { PostSkeletons } from '@/components/loading/PostSkeletons';
-import { TransformedPost } from '@/lib/graphql/transformers';
 
 interface PostListProps {
   categoryId?: string;
@@ -41,7 +39,7 @@ export function PostList({
     search,
   });
 
-  const loadingState = useLoadingState(loading, error, posts, isLoadingMore);
+  const loadingState = useLoadingState(loading, error || null, posts, isLoadingMore);
   
   const { handleScroll, resetFetching } = useInfiniteScroll(
     loadMorePosts,
@@ -110,7 +108,7 @@ export function PostList({
       {/* End of Posts Message */}
       {!hasNextPage && posts.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500">You've reached the end of the posts!</p>
+          <p className="text-gray-500">You&apos;ve reached the end of the posts!</p>
         </div>
       )}
 

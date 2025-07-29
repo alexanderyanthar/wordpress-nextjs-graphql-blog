@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SearchInput } from './SearchInput';
 import { TransformedPost } from '@/lib/graphql/transformers';
+import Image from 'next/image';
 
 interface SearchResultsProps {
   initialResults?: TransformedPost[];
@@ -62,7 +63,7 @@ function SearchResultCard({ post }: { post: TransformedPost }) {
     <Card className="hover:shadow-lg transition-all duration-200">
       {post.featuredImageUrl && (
         <div className="aspect-video relative overflow-hidden rounded-t-lg">
-          <img
+          <Image
             src={post.featuredImageUrl}
             alt={post.title}
             className="object-cover w-full h-full"
