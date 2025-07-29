@@ -189,15 +189,86 @@ export default function PostCard({ post }: PostCardProps) {
             </CardContent>
 
             {/* Card Footer */}
-            <CardFooter className="pt-3">
-            {/* Categories */}
-            <div className="flex flex-wrap gap-1">
-                {post.categoryNames.slice(0, 2).map((categoryName) => (
-                <Badge key={categoryName} variant="secondary" className="text-xs">
-                    {categoryName}
-                </Badge>
-                ))}
-            </div>
+            <CardFooter className="pt-4 pb-4">
+                <div className="w-full space-y-3">
+                    {/* Categories Section */}
+                    {post.categoryNames && post.categoryNames.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex items-center gap-1">
+                        <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        <span className="text-xs font-medium text-muted-foreground">Categories:</span>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-1.5">
+                        {post.categoryNames.slice(0, 3).map((categoryName) => (
+                            <Link
+                            key={categoryName}
+                            href={`/categories/${categoryName.toLowerCase().replace(/\s+/g, '-')}`}
+                            className="group"
+                            >
+                            <Badge 
+                                variant="default" 
+                                className="text-xs font-medium bg-primary/90 hover:bg-primary text-primary-foreground transition-all duration-200 cursor-pointer group-hover:scale-105 group-hover:shadow-sm transform"
+                            >
+                                {categoryName}
+                            </Badge>
+                            </Link>
+                        ))}
+                        
+                        {post.categoryNames.length > 3 && (
+                            <Badge variant="secondary" className="text-xs text-muted-foreground font-normal">
+                            +{post.categoryNames.length - 3}
+                            </Badge>
+                        )}
+                        </div>
+                    </div>
+                    )}
+                    
+                    {/* Tags Section */}
+                    {post.tagNames && post.tagNames.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex items-center gap-1">
+                        <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                        </svg>
+                        <span className="text-xs font-medium text-muted-foreground">Tags:</span>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-1">
+                        {post.tagNames.slice(0, 4).map((tagName) => (
+                            <Link
+                            key={tagName}
+                            href={`/tags/${tagName.toLowerCase().replace(/\s+/g, '-')}`}
+                            className="group"
+                            >
+                            <Badge 
+                                variant="outline" 
+                                className="text-xs text-muted-foreground border-muted-foreground/40 hover:border-primary/60 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer group-hover:scale-105 transform font-normal"
+                            >
+                                #{tagName}
+                            </Badge>
+                            </Link>
+                        ))}
+                        
+                        {post.tagNames.length > 4 && (
+                            <span className="text-xs text-muted-foreground/70 font-normal">
+                            +{post.tagNames.length - 4}
+                            </span>
+                        )}
+                        </div>
+                    </div>
+                    )}
+
+                    {/* Empty state for posts with no categories or tags */}
+                    {(!post.categoryNames || post.categoryNames.length === 0) && 
+                    (!post.tagNames || post.tagNames.length === 0) && (
+                    <div className="text-xs text-muted-foreground/60 italic">
+                        No categories or tags
+                    </div>
+                    )}
+                </div>
             </CardFooter>
         </Card>
         </article>
