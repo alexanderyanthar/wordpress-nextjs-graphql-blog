@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import { SEARCH_POSTS_ADVANCED, GET_SEARCH_SUGGESTIONS } from './search-queries';
 import { transformPosts } from './transformers';
+import { SearchItem } from '@/components/posts/SearchInput';
 
 export interface UseSearchOptions {
   debounceMs?: number;
@@ -10,12 +11,19 @@ export interface UseSearchOptions {
   searchMode?: 'text' | 'category' | 'tag'; // <-- add this line
 }
 
+interface SearchVariables {
+  first: number;
+  search?: string;
+  categoryIds?: (number | string)[];
+  tagIds?: (number | string)[];
+}
+
+
 export const useAdvancedSearch = (options: UseSearchOptions = {}) => {
   const {
     debounceMs = 500,
     minSearchLength = 2,
     enableSuggestions = true,
-    searchMode = 'text', // <-- add this line
   } = options;
 
   // Search state
@@ -55,7 +63,7 @@ export const useAdvancedSearch = (options: UseSearchOptions = {}) => {
 
   // Execute search when parameters change
   useEffect(() => {
-    let searchVars: any = { first: 12 };
+    const searchVars: SearchVariables = { first: 12 };
 
     if (debouncedSearchTerm.length >= minSearchLength) {
       searchVars.search = debouncedSearchTerm;
@@ -192,11 +200,11 @@ export const useAdvancedSearch = (options: UseSearchOptions = {}) => {
 };
 
 // Hook for search input with autocomplete
-export const useSearchInput = (onSelect?: (item: any) => void) => {
+export const useSearchInput = (onSelect?: (item: SearchItem) => void) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent, suggestions: any[]) => {
+  const handleKeyDown = useCallback((event: React.KeyboardEvent, suggestions: SearchItem[]) => {
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();

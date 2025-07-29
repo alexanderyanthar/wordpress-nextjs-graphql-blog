@@ -1,5 +1,6 @@
 import { useGetCategoriesQuery } from '@/types/generated/graphql';
-import { transformCategories, transformCategory } from './transformers';
+import { transformCategories } from './transformers';
+import { ApolloError } from '@apollo/client';
 
 // Custom hook for categories with caching
 export const useCategories = () => {
@@ -19,7 +20,7 @@ export const useCategories = () => {
 };
 
 // Custom hook for error handling
-export const useGraphQLError = (error: any) => {
+export const useGraphQLError = (error: ApolloError | undefined) => {
   if (!error) return null;
 
   if (error.networkError) {

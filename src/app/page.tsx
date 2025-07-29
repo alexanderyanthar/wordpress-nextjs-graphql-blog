@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { PostList } from '@/components/posts/PostList';
+import PostCard from '@/components/posts/PostCard';
 import { SearchInput } from '@/components/posts/SearchInput';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,7 @@ export default function Home() {
   const showLatestPosts = !showQuickSearch && !showCategoryFilter;
 
   return (
+    <>
     <main className="container mx-auto py-8">
       <div className="space-y-8">
         
@@ -159,6 +161,7 @@ export default function Home() {
         
       </div>
     </main>
+    </>
   );
 }
 
@@ -206,7 +209,7 @@ function CategoryFilteredSection({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">
-          Posts in "{categoryName}" ({searchResults.length})
+          Posts in &quot;{categoryName}&quot; ({searchResults.length})
         </h2>
         <Button variant="outline" onClick={onClearCategory}>
           Clear Category Filter
@@ -240,30 +243,3 @@ function LatestPostsSection() {
   );
 }
 
-// Post card component (unchanged)
-function PostCard({ post }: { post: TransformedPost }) {
-  return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <CardTitle className="text-lg line-clamp-2">
-          {post.title}
-        </CardTitle>
-        <CardDescription>
-          {post.formattedDate} • {post.readingTime} min read
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-gray-700 line-clamp-3 mb-3">
-          {post.plainTextExcerpt}
-        </p>
-        <div className="flex flex-wrap gap-1">
-          {post.categoryNames.map((categoryName) => (
-            <Badge key={categoryName} variant="outline" className="text-xs">
-              {categoryName}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}

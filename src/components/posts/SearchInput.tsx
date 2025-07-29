@@ -8,11 +8,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search, X, Filter } from "lucide-react";
 import { useAdvancedSearch, useSearchInput } from '@/lib/graphql/search-hooks';
 import { useCategories } from '@/lib/graphql/hooks';
+import { TransformedPost } from '@/lib/graphql/transformers';
 
 interface SearchInputProps {
-  onSearchResults?: (results: any[]) => void;
+  onSearchResults?: (results: TransformedPost[]) => void;
   placeholder?: string;
   showFilters?: boolean;
+}
+
+// Enhanced SearchItem interface to handle different item types
+// Export the interface so other files can use it
+export interface SearchItem {
+  id: string;
+  type: 'post' | 'category' | 'tag';
+  title?: string;
+  name?: string;
+  databaseId?: number;
 }
 
 export function SearchInput({ 
@@ -22,7 +33,6 @@ export function SearchInput({
 }: SearchInputProps) {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [searchMode, setSearchMode] = useState<'text' | 'category' | 'tag'>('text');
   
   const {
     searchTerm,
@@ -44,20 +54,21 @@ export function SearchInput({
     setIsOpen,
     highlightedIndex,
     handleKeyDown,
-  } = useSearchInput((item) => {
+  } = useSearchInput((item: SearchItem) => {
     if (item.type === 'category') {
-      toggleCategory(item.id);
-      setSearchMode('category');
+      // Use databaseId if available, otherwise convert string id to number
+      const categoryId = item.databaseId || Number(item.id);
+      toggleCategory(categoryId);
       setSearchTerm('');
     } else {
-      setSearchMode('text');
-      setSearchTerm(item.title || item.name);
+      // For posts, use title; for tags, use name
+      const displayText = item.title || item.name || '';
+      setSearchTerm(displayText);
     }
     setIsOpen(false);
   });
 
   const { categories } = useCategories();
-
 
   // Update parent component with results
   useEffect(() => {
@@ -66,12 +77,26 @@ export function SearchInput({
 
   // Show suggestions when typing
   const showSuggestions = isOpen && searchTerm.length >= 2 && !loading;
-  const allSuggestions = [
-    ...suggestions.posts.map((p: any) => ({ ...p, type: 'post' })),
-    ...suggestions.categories.map((c: any) => ({ ...c, type: 'category' })),
-    ...suggestions.tags.map((t: any) => ({ ...t, type: 'tag' })),
+  
+  // Create properly typed suggestions array
+  const allSuggestions: SearchItem[] = [
+    ...suggestions.posts.map((p: TransformedPost) => ({ 
+      id: p.id,
+      title: p.title,
+      type: 'post' as const 
+    })),
+    ...suggestions.categories.map((c: { id: string; name: string; databaseId?: number }) => ({ 
+      id: c.id,
+      name: c.name,
+      databaseId: c.databaseId,
+      type: 'category' as const 
+    })),
+    ...suggestions.tags.map((t: { id: string; name: string }) => ({ 
+      id: t.id,
+      name: t.name,
+      type: 'tag' as const 
+    })),
   ].slice(0, 8);
-
 
   return (
     <div className="space-y-4">
@@ -136,12 +161,12 @@ export function SearchInput({
                       }`}
                       onClick={() => {
                         if (item.type === 'category') {
-                          toggleCategory(item.databaseId);
-                          setSearchMode('category');
+                          const categoryId = item.databaseId || Number(item.id);
+                          toggleCategory(categoryId);
                           setSearchTerm('');
                         } else {
-                          setSearchMode('text');
-                          setSearchTerm(item.title || item.name);
+                          const displayText = item.title || item.name || '';
+                          setSearchTerm(displayText);
                         }
                         setIsOpen(false);
                       }}
@@ -193,7 +218,7 @@ export function SearchInput({
                 <div className="flex flex-wrap gap-2">
                   {searchTerm && (
                     <Badge variant="secondary">
-                      Search: "{searchTerm}"
+                      Search: &quot;{searchTerm}&quot;
                     </Badge>
                   )}
                   {selectedCategories.map((categoryId) => {
@@ -224,4 +249,3 @@ export function SearchInput({
     </div>
   );
 }
-
