@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import PostCard from './PostCard';
 import { usePaginatedPosts, useInfiniteScroll } from '@/lib/graphql/pagination-hooks';
 import { useLoadingState } from '@/lib/graphql/loading-hooks';
 import { GraphQLError } from '@/components/errors/GraphQLError';
@@ -126,48 +127,5 @@ export function PostList({
       )}
       
     </div>
-  );
-}
-
-// Post Card Component
-function PostCard({ post }: { post: TransformedPost }) {
-  return (
-    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
-      {post.featuredImageUrl && (
-        <div className="aspect-video relative overflow-hidden rounded-t-lg">
-          <img
-            src={post.featuredImageUrl}
-            alt={post.title}
-            className="object-cover w-full h-full hover:scale-105 transition-transform duration-200"
-          />
-        </div>
-      )}
-      
-      <div className="p-6">
-        <div className="flex flex-wrap gap-1 mb-3">
-          {post.categoryNames.map((category) => (
-            <Badge key={category} variant="secondary" className="text-xs">
-              {category}
-            </Badge>
-          ))}
-        </div>
-        
-        <h3 className="text-lg font-semibold line-clamp-2 mb-2 hover:text-blue-600 transition-colors">
-          {post.title}
-        </h3>
-        
-        <p className="text-sm text-gray-600 mb-3">
-          {post.formattedDate} • {post.readingTime} min read
-        </p>
-        
-        <p className="text-sm text-gray-700 line-clamp-3 mb-4">
-          {post.plainTextExcerpt}
-        </p>
-        
-        <Button variant="outline" size="sm" className="w-full">
-          Read More
-        </Button>
-      </div>
-    </Card>
   );
 }

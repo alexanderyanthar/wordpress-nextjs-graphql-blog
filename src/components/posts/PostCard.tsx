@@ -71,20 +71,47 @@ export default function PostCard({ post }: PostCardProps) {
 
             {/* Card Header */}
             <CardHeader className="pb-3">
-            <Link href={`/posts/${post.slug}`} className="group">
-                <h3 className="font-semibold text-lg leading-tight group-hover:text-primary transition-colors">
+            <Link 
+                href={`/posts/${post.slug}`} 
+                className="group block"
+                aria-label={`Read more about: ${post.title}`}
+            >
+                <h3 className="font-semibold text-lg leading-tight text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2">
                 {post.title}
                 </h3>
             </Link>
             </CardHeader>
 
             {/* Card Content */}
-            <CardContent className="pb-3">
-            <p className="text-sm text-muted-foreground line-clamp-3">
-                {post.plainTextExcerpt}
-            </p>
-            <div className="text-xs text-muted-foreground mt-2">
-                {post.formattedDate} • {post.readingTime} min read
+            <CardContent className="pb-3 space-y-3">
+                {/* Post Excerpt */}
+                {post.plainTextExcerpt && (
+                    <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+                    {post.plainTextExcerpt}
+                    </p>
+                )}
+                
+            {/* Enhanced Meta Information */}
+            <div className="space-y-2">
+                {/* Primary Meta - Date and Reading Time */}
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <time dateTime={post.date} className="font-medium">
+                    {post.formattedDate}
+                    </time>
+                    <div className="flex items-center">
+                    <span className="w-1 h-1 bg-muted-foreground rounded-full mx-2"></span>
+                    <span className="font-medium">{post.readingTime} min read</span>
+                    </div>
+                </div>
+                
+                {/* Secondary Meta - Word Count and Post ID (for debugging, optional) */}
+                <div className="flex items-center justify-between text-xs text-muted-foreground/70">
+                    {post.tagNames && post.tagNames.length > 0 && (
+                    <span className="text-right">
+                        {post.tagNames.length} tag{post.tagNames.length !== 1 ? 's' : ''}
+                    </span>
+                    )}
+                </div>
             </div>
             </CardContent>
 
