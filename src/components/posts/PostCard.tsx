@@ -29,6 +29,7 @@
  */
 
 import Link from "next/link"
+import { useState } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -49,25 +50,97 @@ interface PostCardProps {
     }
   }
 
+  // Add useState import and create loading state component
+function ImageWithLoading({ 
+    src, 
+    alt, 
+    postSlug 
+  }: { 
+    src: string; 
+    alt: string; 
+    postSlug: string; 
+  }) {
+    const [isLoading, setIsLoading] = useState(true);
+    const [hasError, setHasError] = useState(false);
+  
+    if (hasError) {
+      return (
+        <Link 
+          href={`/posts/${postSlug}`} 
+          className="block w-full h-full bg-gradient-to-br from-muted to-muted/70 flex items-center justify-center hover:from-muted/80 hover:to-muted/50 transition-all duration-300 group/placeholder"
+        >
+          <div className="text-center transform group-hover/placeholder:scale-105 transition-transform duration-200">
+            <div className="w-12 h-12 mx-auto mb-2 bg-background border border-muted-foreground/20 rounded-full flex items-center justify-center group-hover/placeholder:border-primary/30 transition-colors">
+              <svg className="w-6 h-6 text-muted-foreground group-hover/placeholder:text-primary/70 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+            </div>
+            <span className="text-muted-foreground text-xs">Image failed to load</span>
+          </div>
+        </Link>
+      );
+    }
+  
+    return (
+      <Link href={`/posts/${postSlug}`} className="block w-full h-full group/image">
+        <div className="relative w-full h-full">
+          {/* Loading skeleton - only show when loading */}
+          {isLoading && (
+            <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-muted-foreground/20 border-t-primary rounded-full animate-spin" />
+            </div>
+          )}
+          
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className={`object-cover group-hover/image:scale-110 transition-all duration-500 ease-out ${
+              isLoading ? 'opacity-0' : 'opacity-100'
+            }`}
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false);
+              setHasError(true);
+            }}
+          />
+          
+          {/* Image Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300" />
+        </div>
+      </Link>
+    );
+  }
+
 export default function PostCard({ post }: PostCardProps) {
     return (
         <article className="group">
         <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300">
-            {/* Featured Image Section */}
-            <div className="aspect-video relative overflow-hidden">
+        {/* Featured Image Section */}
+        <div className="aspect-video relative overflow-hidden bg-muted rounded-t-lg">
             {post.featuredImageUrl ? (
-                <Image
+                <ImageWithLoading 
                 src={post.featuredImageUrl}
                 alt={post.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                postSlug={post.slug}
                 />
             ) : (
-                <div className="w-full h-full bg-muted flex items-center justify-center">
-                <span className="text-muted-foreground text-sm">No image</span>
+                <Link 
+                href={`/posts/${post.slug}`} 
+                className="block w-full h-full bg-gradient-to-br from-muted to-muted/70 flex items-center justify-center hover:from-muted/80 hover:to-muted/50 transition-all duration-300 group/placeholder"
+                >
+                <div className="text-center transform group-hover/placeholder:scale-105 transition-transform duration-200">
+                    <div className="w-12 h-12 mx-auto mb-2 bg-background border border-muted-foreground/20 rounded-full flex items-center justify-center group-hover/placeholder:border-primary/30 transition-colors">
+                    <svg className="w-6 h-6 text-muted-foreground group-hover/placeholder:text-primary/70 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    </div>
+                    <span className="text-muted-foreground text-xs">No image available</span>
                 </div>
+                </Link>
             )}
-            </div>
+        </div>
 
             {/* Card Header */}
             <CardHeader className="pb-3">
