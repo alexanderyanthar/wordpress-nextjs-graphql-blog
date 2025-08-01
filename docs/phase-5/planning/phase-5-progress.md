@@ -27,8 +27,20 @@
 - Categories optimized: 100 → 15 fetched
 
 ## Step 2: Dynamic Post Pages with Static Generation
-- [ ] 2.1 Post Page Structure Setup
-- [ ] 2.2 GraphQL Post Data Fetching
+
+### 2.1 Post Page Structure Setup
+- [x] Create dynamic post page directory
+- [x] Create post page layout component  
+- [x] Install additional UI components for post pages
+- [x] Update dynamic post page with layout component
+- [x] Test integrated post page layout
+
+### 2.2 GraphQL Post Data Fetching
+- [ ] Create single post GraphQL query
+- [ ] Create post data fetching hooks
+- [ ] Add GraphQL query for related posts
+- [ ] Test post data fetching
+- [ ] Commit post data fetching
 - [ ] 2.3 Static Generation Implementation
 - [ ] 2.4 Post Page Content Display
 
@@ -59,9 +71,9 @@
 - [ ] 8.2 Performance Optimization
 
 ## Current Status
-**Currently On**: Step 2.1 - Post Page Structure Setup
-**Last Completed**: Step 1.2 - Home Page GraphQL Optimization ✅
-**Next Up**: Create dynamic post page foundation
+**Currently On**: Step 2.2 - GraphQL Post Data Fetching
+**Last Completed**: Step 2.1 - Post Page Structure Setup ✅
+**Next Up**: Create single post GraphQL query for fetching by slug
 
 ## Notes
 - ✅ Home page optimization successful - major performance gains achieved
