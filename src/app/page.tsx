@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 import { useCategories } from '@/lib/graphql/hooks';
-import { useAdvancedSearch } from '@/lib/graphql/search-hooks'; // ADDED: Import the search hook
+import { useAdvancedSearch } from '@/lib/graphql/search-hooks'; 
 import { TransformedPost } from '@/lib/graphql/transformers';
 
 export default function Home() {
