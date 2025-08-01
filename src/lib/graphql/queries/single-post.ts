@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client';
 import { 
-    POST_FIELDS,           // Added this for GET_RELATED_POSTS
-    POST_CONTENT_FIELDS,   // For GET_POST_BY_SLUG
-    CATEGORY_FIELDS,
-    TAG_FIELDS,
-    AUTHOR_FIELDS,
-    FEATURED_IMAGE_FIELDS 
-  } from '../fragments';
+  POST_FIELDS,           // Added this - it was missing!
+  POST_CONTENT_FIELDS,
+  CATEGORY_FIELDS,
+  TAG_FIELDS,
+  AUTHOR_FIELDS,
+  FEATURED_IMAGE_FIELDS 
+} from '../fragments';
 
 // Single post query by slug
 export const GET_POST_BY_SLUG = gql`
@@ -47,6 +47,7 @@ export const GET_POST_BY_SLUG = gql`
 export const GET_RELATED_POSTS = gql`
   ${POST_FIELDS}
   ${CATEGORY_FIELDS}
+  ${TAG_FIELDS}
   ${FEATURED_IMAGE_FIELDS}
   
   query GetRelatedPosts(
@@ -71,6 +72,11 @@ export const GET_RELATED_POSTS = gql`
         categories {
           nodes {
             ...CategoryFields
+          }
+        }
+        tags {
+          nodes {
+            ...TagFields
           }
         }
       }
@@ -133,6 +139,7 @@ export interface SinglePostQueryResult {
   } | null;
 }
 
+// Fixed: This type should match what the query actually returns (with all fields)
 export interface RelatedPostsQueryResult {
   posts: {
     nodes: Array<{
@@ -141,15 +148,36 @@ export interface RelatedPostsQueryResult {
       excerpt: string;
       slug: string;
       date: string;
+      modified: string;  // Added - required by your transformer
       featuredImage: {
         node: {
+          id: string;         // Added - required by your transformer
           sourceUrl: string;
           altText: string;
+          caption?: string;   // Added - from FeaturedImageFields
+          mediaDetails: {     // Added - from FeaturedImageFields
+            width: number;
+            height: number;
+          };
         };
       } | null;
       categories: {
         nodes: Array<{
+          id: string;         // Added - from CategoryFields
+          databaseId: number; // Added - from CategoryFields
           name: string;
+          slug: string;       // Added - from CategoryFields
+          count: number;      // Added - from CategoryFields
+          description: string; // Added - from CategoryFields
+        }>;
+      };
+      tags: {              // Added - was completely missing
+        nodes: Array<{
+          id: string;
+          name: string;
+          slug: string;
+          count: number;
+          description: string;
         }>;
       };
     }>;
