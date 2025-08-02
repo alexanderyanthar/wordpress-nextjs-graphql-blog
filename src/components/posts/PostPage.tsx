@@ -44,11 +44,14 @@ export function PostPage({ post, children }: PostPageProps) {
         
         {/* Featured Image */}
         {post.featuredImageUrl && (
-          <div className="mb-8">
+          <div className="mb-8 relative aspect-video w-full">
             <Image
               src={post.featuredImageUrl}
               alt={post.title}
-              className="w-full h-auto rounded-lg shadow-md"
+              fill
+              className="object-cover rounded-lg shadow-md"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              priority
             />
           </div>
         )}

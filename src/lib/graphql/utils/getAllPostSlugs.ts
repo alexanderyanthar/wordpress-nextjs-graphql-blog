@@ -32,7 +32,6 @@ export async function getAllPostSlugs(
       after = data?.posts?.pageInfo?.endCursor || null;
     }
 
-    console.log(`📄 Found ${allSlugs.length} posts for static generation`);
     return allSlugs;
   } catch (error) {
     console.error('Error fetching post slugs for static generation:', error);

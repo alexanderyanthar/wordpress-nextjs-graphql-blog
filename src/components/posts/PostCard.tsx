@@ -1,33 +1,3 @@
-/**
- * PostCard Component Requirements:
- * 
- * Content Display:
- * - Featured image with fallback handling
- * - Post title (clickable to full post)
- * - Post excerpt/summary
- * - Author information with avatar
- * - Publication date
- * - Reading time estimate
- * - Categories and tags
- * 
- * Interactive Features:
- * - Hover effects on card and image
- * - Clickable title and image
- * - Category/tag badges that are clickable
- * - Smooth transitions and animations
- * 
- * Responsive Design:
- * - Card layout adapts to grid system
- * - Image aspect ratio maintained
- * - Typography scales appropriately
- * - Touch-friendly on mobile
- * 
- * Data Integration:
- * - Compatible with WordPress GraphQL data
- * - Handles missing/optional fields gracefully
- * - Type-safe with TypeScript interfaces
- */
-
 import Link from "next/link"
 import { useState } from "react"
 import Image from "next/image"
