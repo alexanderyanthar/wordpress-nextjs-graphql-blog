@@ -75,7 +75,7 @@ export function PostPageClient({ slug }: PostPageClientProps) {
             <CardContent className="p-6 text-center">
               <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
               <p className="text-gray-600 mb-4">
-                The post with slug "{slug}" could not be found.
+                The post with slug &quot;{slug}&quot; could not be found.
               </p>
               <Button variant="outline" onClick={() => window.history.back()}>
                 Go Back

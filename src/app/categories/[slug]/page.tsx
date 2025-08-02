@@ -2,9 +2,10 @@ import { Metadata } from 'next';
 import client from '@/lib/apollo-client';
 import { getAllCategorySlugs } from '@/lib/graphql/utils/getAllCategorySlugs';
 import { generateCategoryMetadata } from '@/lib/seo/generateCategoryMetadata';
+import { CategoryPageClient } from './CategoryPageClient';
 
 // Configure ISR revalidation
-// export const revalidate = 7200; // Revalidate every 2 hours
+export const revalidate = 7200; // Revalidate every 2 hours
 
 interface CategoryPageProps {
   params: Promise<{
@@ -34,23 +35,5 @@ export async function generateMetadata(
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
-
-  return (
-    <main className="container mx-auto py-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-6">
-          Category: {slug.replace(/-/g, ' ')}
-        </h1>
-        <p className="text-gray-600 mb-8">
-          This is a placeholder for the category page with slug: {slug}
-        </p>
-        <div className="text-center py-12">
-          <p>Category posts will be displayed here.</p>
-          <p className="text-sm text-gray-500 mt-2">
-            This page is statically generated with ISR (2 hour revalidation)
-          </p>
-        </div>
-      </div>
-    </main>
-  );
+  return <CategoryPageClient slug={slug} />;
 }

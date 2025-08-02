@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ChevronRight, Home } from 'lucide-react';
+import { ChevronRight, Home, Folder } from 'lucide-react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,13 +9,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-interface PostBreadcrumbProps {
-  postTitle: string;
-  categoryName?: string;
-  categorySlug?: string;
+interface CategoryBreadcrumbProps {
+  categoryName: string;
 }
 
-export function PostBreadcrumb({ postTitle, categoryName, categorySlug }: PostBreadcrumbProps) {
+export function CategoryBreadcrumb({ categoryName }: CategoryBreadcrumbProps) {
   return (
     <Breadcrumb className="mb-6">
       <BreadcrumbList>
@@ -34,22 +32,12 @@ export function PostBreadcrumb({ postTitle, categoryName, categorySlug }: PostBr
         
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/posts">Posts</Link>
+            <Link href="/categories" className="flex items-center gap-1">
+              <Folder className="w-4 h-4" />
+              Categories
+            </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        
-        {categoryName && categorySlug && (
-          <>
-            <BreadcrumbSeparator>
-              <ChevronRight className="w-4 h-4" />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={`/categories/${categorySlug}`}>{categoryName}</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-          </>
-        )}
         
         <BreadcrumbSeparator>
           <ChevronRight className="w-4 h-4" />
@@ -57,7 +45,7 @@ export function PostBreadcrumb({ postTitle, categoryName, categorySlug }: PostBr
         
         <BreadcrumbItem>
           <BreadcrumbPage className="max-w-[200px] truncate">
-            {postTitle}
+            {categoryName}
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
