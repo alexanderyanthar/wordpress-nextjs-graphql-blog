@@ -1,8 +1,6 @@
 import { gql } from '@apollo/client';
 import { 
   POST_FIELDS, 
-  CATEGORY_FIELDS, 
-  TAG_FIELDS, 
   FEATURED_IMAGE_FIELDS 
 } from '../fragments';
 
@@ -90,7 +88,14 @@ export const HOME_PAGE_QUERY = gql`
   }
 `;
 
-// Types for the query result
+// Import the generated types from your GraphQL codegen
+import type { GetPostsPaginatedQuery, GetCategoriesQuery } from '@/types/generated/graphql';
+
+// Extract the proper types from your generated types
+type WordPressPost = NonNullable<GetPostsPaginatedQuery['posts']>['nodes'][0];
+type WordPressCategory = NonNullable<GetCategoriesQuery['categories']>['nodes'][0];
+
+// Types matching your existing transformers
 export interface HomePageQueryResult {
   generalSettings: {
     title: string;
@@ -98,16 +103,28 @@ export interface HomePageQueryResult {
     url: string;
     language: string;
   };
-  posts: {
-    nodes: any[]; // Will be transformed
+  featuredPosts?: {
+    nodes: WordPressPost[]; // Use the actual WordPress post type
     pageInfo: {
       hasNextPage: boolean;
       hasPreviousPage: boolean;
-      startCursor: string;
-      endCursor: string;
+    };
+  };
+  latestPosts?: {
+    nodes: WordPressPost[]; // Use the actual WordPress post type
+    pageInfo: {
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+    };
+  };
+  posts?: {
+    nodes: WordPressPost[]; // Use the actual WordPress post type
+    pageInfo: {
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
     };
   };
   categories: {
-    nodes: any[]; // Will be transformed
+    nodes: WordPressCategory[]; // Use the actual WordPress category type
   };
 }

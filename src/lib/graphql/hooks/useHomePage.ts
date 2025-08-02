@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery, ApolloError } from '@apollo/client';
 import { HOME_PAGE_QUERY, HomePageQueryResult } from '../queries/home-page';
 import { transformPosts, transformCategories } from '../transformers';
 import { TransformedPost, TransformedCategory } from '../transformers';
@@ -16,7 +16,7 @@ interface UseHomePageReturn {
   
   // States
   loading: boolean;
-  error: any;
+  error: ApolloError | undefined;
   
   // Helpers
   hasMorePosts: boolean;

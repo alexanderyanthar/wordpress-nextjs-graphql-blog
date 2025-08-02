@@ -43,14 +43,14 @@ export const GET_POST_BY_SLUG = gql`
   }
 `;
 
-// Related posts query (posts in same categories)
-export const GET_RELATED_POSTS = gql`
+// Related posts query (posts in same categories) - renamed to avoid conflict
+export const GET_SINGLE_POST_RELATED = gql`
   ${POST_FIELDS}
   ${CATEGORY_FIELDS}
   ${TAG_FIELDS}
   ${FEATURED_IMAGE_FIELDS}
   
-  query GetRelatedPosts(
+  query GetSinglePostRelated(
     $categoryIds: [ID!]
     $excludePostId: ID!
     $first: Int = 3
@@ -137,6 +137,39 @@ export interface SinglePostQueryResult {
       }>;
     };
   } | null;
+}
+
+// Query to get all post slugs for static generation
+export const GET_ALL_POST_SLUGS = gql`
+  query GetAllPostSlugs($first: Int = 100, $after: String) {
+    posts(
+      first: $first
+      after: $after
+      where: { 
+        status: PUBLISH 
+      }
+    ) {
+      nodes {
+        slug
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`;
+
+export interface PostSlugsQueryResult {
+  posts: {
+    nodes: Array<{
+      slug: string;
+    }>;
+    pageInfo: {
+      hasNextPage: boolean;
+      endCursor: string | null;
+    };
+  };
 }
 
 // Fixed: This type should match what the query actually returns (with all fields)

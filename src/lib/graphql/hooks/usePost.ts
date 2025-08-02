@@ -1,5 +1,5 @@
-import { useQuery } from '@apollo/client';
-import { GET_POST_BY_SLUG, GET_RELATED_POSTS, SinglePostQueryResult, RelatedPostsQueryResult } from '../queries/single-post';
+import { useQuery, ApolloError } from '@apollo/client';
+import { GET_POST_BY_SLUG, GET_SINGLE_POST_RELATED, SinglePostQueryResult, RelatedPostsQueryResult } from '../queries/single-post';
 import { transformPost, transformPosts } from '../transformers';
 import { TransformedPost } from '../transformers';
 
@@ -18,8 +18,8 @@ interface UsePostReturn {
   relatedLoading: boolean;
   
   // Error states
-  error: any;
-  relatedError: any;
+  error: ApolloError | undefined;
+  relatedError: ApolloError | undefined;
   
   // Helpers
   isNotFound: boolean;
@@ -57,7 +57,7 @@ export function usePost({ slug, fetchRelated = true }: UsePostOptions): UsePostR
     data: relatedData,
     loading: relatedLoading,
     error: relatedError,
-  } = useQuery<RelatedPostsQueryResult>(GET_RELATED_POSTS, {
+  } = useQuery<RelatedPostsQueryResult>(GET_SINGLE_POST_RELATED, {
     variables: {
       categoryIds,
       excludePostId: postId,
@@ -81,7 +81,7 @@ export function usePost({ slug, fetchRelated = true }: UsePostOptions): UsePostR
     
     // Error states
     error,
-    relatedError: shouldFetchRelated ? relatedError : null,
+    relatedError: shouldFetchRelated ? relatedError : undefined,
     
     // Helpers
     isNotFound,

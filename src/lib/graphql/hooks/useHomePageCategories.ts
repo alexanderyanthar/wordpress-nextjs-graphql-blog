@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery, ApolloError } from '@apollo/client';
 import { gql } from '@apollo/client';
 import { transformCategories } from '../transformers';
 import { HOMEPAGE_CATEGORY_FIELDS } from '../queries/home-page';
@@ -27,6 +27,6 @@ export function useHomePageCategories(skip = false) {
   return {
     categories: data?.categories?.nodes ? transformCategories(data.categories.nodes) : [],
     loading: skip ? false : loading,
-    error: skip ? null : error,
+    error: skip ? null : (error as ApolloError | undefined),
   };
 }

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { TransformedPost } from '@/lib/graphql/transformers';
+import Image from 'next/image';
 
 interface PostPageProps {
   post: TransformedPost;
@@ -44,7 +45,7 @@ export function PostPage({ post, children }: PostPageProps) {
         {/* Featured Image */}
         {post.featuredImageUrl && (
           <div className="mb-8">
-            <img
+            <Image
               src={post.featuredImageUrl}
               alt={post.title}
               className="w-full h-auto rounded-lg shadow-md"
