@@ -2,6 +2,9 @@
 
 import React from 'react';
 import { PostPage } from '@/components/posts/PostPage';
+import { PostBreadcrumb } from '@/components/posts/PostBreadcrumb';
+import { ReadingProgress } from '@/components/posts/ReadingProgress';
+import { PostContent } from '@/components/posts/PostContent';
 import { usePost } from '@/lib/graphql/hooks/usePost';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,7 +75,7 @@ export function PostPageClient({ slug }: PostPageClientProps) {
             <CardContent className="p-6 text-center">
               <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
               <p className="text-gray-600 mb-4">
-                The post with slug &quot;{slug}&quot; could not be found.
+                The post with slug "{slug}" could not be found.
               </p>
               <Button variant="outline" onClick={() => window.history.back()}>
                 Go Back
@@ -87,34 +90,47 @@ export function PostPageClient({ slug }: PostPageClientProps) {
   // Post found - render the content
   if (!post) return null;
 
-  return (
-    <main className="container mx-auto py-8">
-      <PostPage post={post}>
-        <div dangerouslySetInnerHTML={{ __html: post.content }} />
-      </PostPage>
+  const primaryCategory = post.categoryNames[0];
 
-      {/* Related Posts Section */}
-      {hasRelatedPosts && (
-        <>
-          <Separator className="my-12" />
-          <section className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Related Posts</h2>
-            
-            {relatedLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin mr-2" />
-                <span>Loading related posts...</span>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {relatedPosts.map((relatedPost) => (
-                  <PostCard key={relatedPost.id} post={relatedPost} />
-                ))}
-              </div>
-            )}
-          </section>
-        </>
-      )}
-    </main>
+  return (
+    <>
+      <ReadingProgress />
+      <main className="container mx-auto py-8">
+        {/* Breadcrumb Navigation */}
+        <PostBreadcrumb 
+          postTitle={post.title}
+          categoryName={primaryCategory}
+          categorySlug={primaryCategory?.toLowerCase().replace(/\s+/g, '-')}
+        />
+
+        {/* Post Content */}
+        <PostPage post={post}>
+          <PostContent post={post} />
+        </PostPage>
+
+        {/* Related Posts Section */}
+        {hasRelatedPosts && (
+          <>
+            <Separator className="my-16" />
+            <section className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold mb-8">Related Posts</h2>
+              
+              {relatedLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                  <span>Loading related posts...</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {relatedPosts.map((relatedPost) => (
+                    <PostCard key={relatedPost.id} post={relatedPost} />
+                  ))}
+                </div>
+              )}
+            </section>
+          </>
+        )}
+      </main>
+    </>
   );
 }

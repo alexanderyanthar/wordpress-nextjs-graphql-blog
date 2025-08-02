@@ -3,6 +3,8 @@ import { PostPageClient } from './PostPageClient';
 import client from '@/lib/apollo-client';
 import { getAllPostSlugs } from '@/lib/graphql/utils/getAllPostSlugs';
 
+export const revalidate = 3600;
+
 interface PostPageProps {
   params: Promise<{
     slug: string;
