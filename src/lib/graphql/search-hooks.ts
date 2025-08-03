@@ -9,6 +9,7 @@ export interface UseSearchOptions {
   minSearchLength?: number;
   enableSuggestions?: boolean;
   searchMode?: 'text' | 'category' | 'tag'; // <-- add this line
+  initialSearchTerm?: string;
 }
 
 interface SearchVariables {
@@ -24,15 +25,20 @@ export const useAdvancedSearch = (options: UseSearchOptions = {}) => {
     debounceMs = 500,
     minSearchLength = 2,
     enableSuggestions = true,
+    initialSearchTerm = '',  // ADD THIS LINE
   } = options;
 
-  // Search state
-  const [searchTerm, setSearchTerm] = useState('');
+  // Search state - Initialize with provided search term
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);  // UPDATE THIS LINE
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(initialSearchTerm);  // UPDATE THIS LINE
+  const [isSearchActive, setIsSearchActive] = useState(!!initialSearchTerm);  // UPDATE THIS LINE
 
+  useEffect(() => {
+    setSearchTerm(initialSearchTerm);
+    setDebouncedSearchTerm(initialSearchTerm);
+  }, [initialSearchTerm]);
   
   // Debounce search term
   useEffect(() => {

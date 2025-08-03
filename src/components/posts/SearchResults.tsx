@@ -10,13 +10,22 @@ import Image from 'next/image';
 
 interface SearchResultsProps {
   initialResults?: TransformedPost[];
+  initialSearchTerm?: string;  // ADD THIS LINE
+  onSearchResults?: (results: TransformedPost[], searchTerm?: string) => void;  // UPDATE THIS LINE
 }
 
-export function SearchResults({ initialResults = [] }: SearchResultsProps) {
+export function SearchResults({ 
+  initialResults = [],
+  initialSearchTerm = '',  // ADD THIS LINE
+  onSearchResults 
+}: SearchResultsProps) {
   const [searchResults, setSearchResults] = useState<TransformedPost[]>(initialResults);
 
   const handleSearchResults = (results: TransformedPost[]) => {
     setSearchResults(results);
+    // You might need to get the search term from your SearchInput component
+    // For now, we'll pass undefined, but you can enhance this later
+    onSearchResults?.(results);
   };
 
   return (
@@ -26,9 +35,10 @@ export function SearchResults({ initialResults = [] }: SearchResultsProps) {
         onSearchResults={handleSearchResults}
         placeholder="Search posts, categories, or tags..."
         showFilters={true}
+        initialSearchTerm={initialSearchTerm}
       />
 
-      {/* Search Results */}
+      {/* Rest of your component stays exactly the same */}
       {searchResults.length > 0 && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">
@@ -42,8 +52,7 @@ export function SearchResults({ initialResults = [] }: SearchResultsProps) {
         </div>
       )}
 
-      {/* Empty State */}
-      {searchResults.length === 0 && (
+    {searchResults.length === 0 && (
         <Card>
           <CardContent className="text-center py-12">
             <h3 className="text-lg font-medium mb-2">Start Searching</h3>
@@ -66,6 +75,7 @@ function SearchResultCard({ post }: { post: TransformedPost }) {
           <Image
             src={post.featuredImageUrl}
             alt={post.title}
+            fill
             className="object-cover w-full h-full"
           />
         </div>

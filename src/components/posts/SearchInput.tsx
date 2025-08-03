@@ -7,13 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, X, Filter } from "lucide-react";
 import { useAdvancedSearch, useSearchInput } from '@/lib/graphql/search-hooks';
-import { useCategories } from '@/lib/graphql/hooks';
-import { TransformedPost } from '@/lib/graphql/transformers';
+import { useHomePageCategories } from '@/lib/graphql/hooks/useHomePageCategories';
+import { TransformedPost, TransformedCategory } from '@/lib/graphql/transformers';
 
 interface SearchInputProps {
   onSearchResults?: (results: TransformedPost[]) => void;
   placeholder?: string;
   showFilters?: boolean;
+  categories?: TransformedCategory[];
+  initialSearchTerm?: string;  // ADD THIS LINE
 }
 
 // Enhanced SearchItem interface to handle different item types
@@ -29,7 +31,9 @@ export interface SearchItem {
 export function SearchInput({ 
   onSearchResults, 
   placeholder = "Search posts...",
-  showFilters = true 
+  showFilters = true,
+  categories: categoriesProp,
+  initialSearchTerm = ''  // ADD THIS LINE
 }: SearchInputProps) {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +51,7 @@ export function SearchInput({
     toggleCategory,
   } = useAdvancedSearch({
     enableSuggestions: true,
+    initialSearchTerm,  // ADD THIS LINE
   });
 
   const {
@@ -68,7 +73,11 @@ export function SearchInput({
     setIsOpen(false);
   });
 
-  const { categories } = useCategories();
+  // NEW: Skip fetching categories if provided via props
+  const { categories: fetchedCategories } = useHomePageCategories(!!categoriesProp);
+  
+  // Use provided categories or fallback to fetched ones
+  const categories = categoriesProp || fetchedCategories;
 
   // Update parent component with results
   useEffect(() => {
