@@ -5,6 +5,7 @@ import { ApolloWrapper } from "@/lib/apollo-provider";
 import { Header } from "@/components/layout";
 import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +34,14 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <ApolloWrapper>
-            <Header />
-            {children}
-            <Footer />
+            <ErrorBoundary>
+              <Header />
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
+              <Footer />
+            </ErrorBoundary>
           </ApolloWrapper>
-          
         </ThemeProvider>
       </body>
     </html>
