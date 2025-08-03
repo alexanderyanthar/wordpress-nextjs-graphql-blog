@@ -149,7 +149,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Badge
-                  key={category.id}
+                  key={category.databaseId}
                   variant={selectedCategories.includes(category.databaseId) ? "default" : "outline"}
                   className="cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => handleCategoryClick(category.databaseId)}

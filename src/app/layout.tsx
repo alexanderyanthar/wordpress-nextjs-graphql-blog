@@ -27,14 +27,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          <Header />
-          <ApolloWrapper>{children}</ApolloWrapper>
-          <Footer />
+          <ApolloWrapper>
+            <Header />
+            {children}
+            <Footer />
+          </ApolloWrapper>
+          
         </ThemeProvider>
       </body>
     </html>

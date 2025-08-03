@@ -1,56 +1,45 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import client from '@/lib/apollo-client';
-import { getAllCategorySlugs } from '@/lib/graphql/utils/getAllCategorySlugs';
-import { generateCategoryMetadata } from '@/lib/seo/generateCategoryMetadata';
+import { PostPageClient } from './PostPageClient';
+import { getAllPostSlugs } from '@/lib/graphql/utils/getAllPostSlugs';
+import { generatePostMetadata } from '@/lib/seo/generatePostMetadata';
 
 // Configure ISR revalidation
-// export const revalidate = 7200; // Revalidate every 2 hours
+export const revalidate = 3600; // Revalidate every hour
 
-interface CategoryPageProps {
+interface PostPageProps {
   params: Promise<{
     slug: string;
   }>;
 }
 
-// Static generation function
+// Static generation function for posts
 export async function generateStaticParams() {
   try {
-    const slugs = await getAllCategorySlugs(client);
-    console.log(`🏗️  Generating static params for ${slugs.length} categories`);
+    const slugs = await getAllPostSlugs(client);
     return slugs.map((slug) => ({ slug }));
   } catch (error) {
-    console.error('Error in generateStaticParams for categories:', error);
+    console.error('Error in generateStaticParams for posts:', error);
     return []; // Return empty array so build doesn't fail
   }
 }
 
-// Enhanced metadata generation with real category data
+// Enhanced metadata generation with real post data
 export async function generateMetadata(
-  { params }: CategoryPageProps
+  { params }: PostPageProps
 ): Promise<Metadata> {
   const { slug } = await params;
-  return generateCategoryMetadata(slug);
+  return generatePostMetadata(slug);
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
 
-  return (
-    <main className="container mx-auto py-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-6">
-          Category: {slug.replace(/-/g, ' ')}
-        </h1>
-        <p className="text-gray-600 mb-8">
-          This is a placeholder for the category page with slug: {slug}
-        </p>
-        <div className="text-center py-12">
-          <p>Category posts will be displayed here.</p>
-          <p className="text-sm text-gray-500 mt-2">
-            This page is statically generated with ISR (2 hour revalidation)
-          </p>
-        </div>
-      </div>
-    </main>
-  );
+  // Validate slug format (optional but recommended)
+  if (!slug || typeof slug !== 'string') {
+    notFound();
+  }
+
+  return <PostPageClient slug={slug} />;
 }

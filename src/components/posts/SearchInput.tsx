@@ -14,7 +14,8 @@ interface SearchInputProps {
   onSearchResults?: (results: TransformedPost[]) => void;
   placeholder?: string;
   showFilters?: boolean;
-  categories?: TransformedCategory[]; // NEW: Optional categories prop
+  categories?: TransformedCategory[];
+  initialSearchTerm?: string;  // ADD THIS LINE
 }
 
 // Enhanced SearchItem interface to handle different item types
@@ -31,7 +32,8 @@ export function SearchInput({
   onSearchResults, 
   placeholder = "Search posts...",
   showFilters = true,
-  categories: categoriesProp // NEW: Categories from props
+  categories: categoriesProp,
+  initialSearchTerm = ''  // ADD THIS LINE
 }: SearchInputProps) {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +51,7 @@ export function SearchInput({
     toggleCategory,
   } = useAdvancedSearch({
     enableSuggestions: true,
+    initialSearchTerm,  // ADD THIS LINE
   });
 
   const {
