@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PostCard from './PostCard';
+import { Pagination, LoadMorePagination } from './Pagination';
 import { usePaginatedPosts, useInfiniteScroll } from '@/lib/graphql/pagination-hooks';
 import { useLoadingState } from '@/lib/graphql/loading-hooks';
 import { GraphQLError } from '@/components/errors/GraphQLError';
@@ -15,6 +16,8 @@ interface PostListProps {
   search?: string;
   pageSize?: number;
   enableInfiniteScroll?: boolean;
+  paginationType?: 'pagination' | 'loadMore' | 'infinite';
+  showPageSizeSelector?: boolean;
 }
 
 export function PostList({
@@ -23,6 +26,8 @@ export function PostList({
   search,
   pageSize = 12,
   enableInfiniteScroll = false,
+  paginationType = 'loadMore',
+  showPageSizeSelector = false,
 }: PostListProps) {
   const {
     posts,
@@ -30,6 +35,7 @@ export function PostList({
     error,
     hasNextPage,
     isLoadingMore,
+    totalCount,
     loadMorePosts,
     resetPagination,
   } = usePaginatedPosts({
@@ -49,11 +55,11 @@ export function PostList({
 
   // Set up infinite scroll
   useEffect(() => {
-    if (enableInfiniteScroll) {
+    if (enableInfiniteScroll || paginationType === 'infinite') {
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
     }
-  }, [enableInfiniteScroll, handleScroll]);
+  }, [enableInfiniteScroll, paginationType, handleScroll]);
 
   // Reset fetching state when loading completes
   useEffect(() => {
@@ -61,6 +67,32 @@ export function PostList({
       resetFetching();
     }
   }, [isLoadingMore, resetFetching]);
+
+  // Handle page size changes
+  const handlePageSizeChange = (newPageSize: number) => {
+    // You might want to add this functionality to your hook
+    // For now, we'll just reset pagination
+    resetPagination();
+  };
+
+  // Handle navigation - for now these will work with your existing loadMorePosts
+  const handleNextPage = () => {
+    loadMorePosts();
+  };
+
+  const handlePreviousPage = () => {
+    // This would need to be implemented in your hook for true previous page functionality
+    // For now, we'll just reset to beginning
+    resetPagination();
+  };
+
+  // Create pageInfo object for the Pagination component
+  const pageInfo = {
+    hasNextPage,
+    hasPreviousPage: false, // You'd need to track this in your hook
+    startCursor: null,
+    endCursor: null,
+  };
 
   // Error state
   if (loadingState.isError && error) {
@@ -91,8 +123,32 @@ export function PostList({
         <PostSkeletons count={3} variant="card" />
       )}
 
-      {/* Load More Button */}
-      {!enableInfiniteScroll && hasNextPage && !loadingState.isLoading && (
+      {/* Pagination Component */}
+      {paginationType === 'pagination' && !loadingState.isLoading && posts.length > 0 && (
+        <Pagination
+          pageInfo={pageInfo}
+          onNextPage={handleNextPage}
+          onPreviousPage={handlePreviousPage}
+          onPageSizeChange={showPageSizeSelector ? handlePageSizeChange : undefined}
+          loading={loading}
+          isLoadingMore={isLoadingMore}
+          currentPageSize={pageSize}
+          totalCount={totalCount}
+        />
+      )}
+
+      {/* Load More Pagination Component */}
+      {paginationType === 'loadMore' && !loadingState.isLoading && (
+        <LoadMorePagination
+          hasNextPage={hasNextPage}
+          onLoadMore={loadMorePosts}
+          loading={loading}
+          isLoadingMore={isLoadingMore}
+        />
+      )}
+
+      {/* Original Load More Button (keeping for backward compatibility) */}
+      {!enableInfiniteScroll && paginationType !== 'pagination' && paginationType !== 'loadMore' && hasNextPage && !loadingState.isLoading && (
         <div className="flex justify-center">
           <Button
             onClick={loadMorePosts}
