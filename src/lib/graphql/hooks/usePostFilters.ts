@@ -37,7 +37,7 @@ export const usePostFilters = (options: UsePostFiltersOptions = {}) => {
 
   // Convert filter state to GraphQL variables
   const queryVariables = useMemo(() => {
-    const variables: any = {
+    const variables: Record<string, unknown> = {
       first: pageSize,
     };
 
@@ -87,7 +87,7 @@ export const usePostFilters = (options: UsePostFiltersOptions = {}) => {
   const posts = useMemo(() => {
     if (!data?.posts?.nodes) return [];
     
-    let transformedPosts = transformPosts(data.posts.nodes);
+    const transformedPosts = transformPosts(data.posts.nodes);
     
     // Apply client-side sorting (since GraphQL might not support all sort options)
     switch (filterState.sortBy) {
@@ -189,15 +189,6 @@ export const usePostFilters = (options: UsePostFiltersOptions = {}) => {
   };
 };
 
-// Helper function to check if filters are active
-function hasActiveFilters(filters: FilterState): boolean {
-  return (
-    filters.searchTerm.trim() !== '' ||
-    filters.selectedCategories.length > 0 ||
-    filters.selectedTags.length > 0 ||
-    filters.dateRange !== undefined
-  );
-}
 
 // Helper function to build filter summary text
 export function getFilterSummary(filters: FilterState): string {

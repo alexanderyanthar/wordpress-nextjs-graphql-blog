@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 
+// Bundle analyzer setup
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: true,
+});
+
 const nextConfig: NextConfig = {
   images: {
     // Image optimization settings
@@ -71,6 +77,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  
+  // Bundle size optimization
+  webpack: (config, { dev, isServer }) => {
+    // Optimize bundle size in production
+    if (!dev && !isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        // Optimize lodash imports
+        'lodash': 'lodash-es',
+      };
+    }
+    
+    return config;
+  },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

@@ -135,7 +135,7 @@ export function LoadMorePagination({
     return (
       <div className={`text-center py-8 ${className}`}>
         <p className="text-sm text-muted-foreground">
-          You've reached the end of the posts
+          You&apos;ve reached the end of the posts
         </p>
       </div>
     );

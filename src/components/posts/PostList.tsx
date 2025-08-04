@@ -69,7 +69,7 @@ export function PostList({
   }, [isLoadingMore, resetFetching]);
 
   // Handle page size changes
-  const handlePageSizeChange = (newPageSize: number) => {
+  const handlePageSizeChange = (_newPageSize: number) => {
     // You might want to add this functionality to your hook
     // For now, we'll just reset pagination
     resetPagination();

@@ -108,19 +108,6 @@ export const useFilterPersistence = (options: UseFilterPersistenceOptions = {}) 
     }
   }, [router, filtersToURLParams]);
 
-  // Debounced URL update
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    const debouncedUpdateURL = (filters: FilterState) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        updateURL(filters);
-      }, debounceMs);
-    };
-
-    return () => clearTimeout(timeoutId);
-  }, [updateURL, debounceMs]);
 
   // Initialize filters from URL on mount
   const initializeFiltersFromURL = useCallback(() => {
