@@ -3,6 +3,7 @@
 import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SearchResults } from '@/components/posts/SearchResults';
+import { TransformedPost } from '@/lib/graphql/transformers';
 
 // Search page content component wrapped in Suspense
 function SearchPageContent() {
@@ -13,7 +14,7 @@ function SearchPageContent() {
   const searchTerm = searchParams.get('q') || '';
 
   // Handle search results and update URL
-  const handleSearchResults = (results: any[], newSearchTerm?: string) => {
+  const handleSearchResults = (results: TransformedPost[], newSearchTerm?: string) => {
     // Only update URL if search term actually changed
     if (newSearchTerm !== undefined && newSearchTerm !== searchTerm) {
       const params = new URLSearchParams();
@@ -36,7 +37,7 @@ function SearchPageContent() {
           </p>
           {searchTerm && (
             <p className="text-sm text-gray-500 mt-1">
-              Searching for: "<span className="font-medium">{searchTerm}</span>"
+              Searching for: &quot;<span className="font-medium">{searchTerm}</span>&quot;
             </p>
           )}
         </div>

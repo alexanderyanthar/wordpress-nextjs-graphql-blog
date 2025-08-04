@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Search, ArrowRight, ExternalLink } from "lucide-react";
 import { SearchInput } from "@/components/posts/SearchInput";
 import { TransformedPost } from "@/lib/graphql/transformers";
-import Link from "next/link";
 import Image from "next/image";
 
 interface SearchModalProps {
@@ -22,7 +21,7 @@ interface SearchModalProps {
   onSearchResults: (results: TransformedPost[], searchTerm?: string) => void;
 }
 
-function SearchModal({ isOpen, onClose, onSearchResults }: SearchModalProps) {
+function SearchModal({ isOpen, onClose, onSearchResults: _onSearchResults }: SearchModalProps) {
   const [searchResults, setSearchResults] = useState<TransformedPost[]>([]);
   const [currentSearchTerm, setCurrentSearchTerm] = useState('');
   const router = useRouter();

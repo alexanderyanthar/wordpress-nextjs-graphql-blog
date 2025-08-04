@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +23,6 @@ import {
   Filter, 
   ChevronDown, 
   X, 
-  Calendar,
   SortAsc,
   SortDesc
 } from "lucide-react";
@@ -80,9 +78,7 @@ export function PostFilters({
   onFilterChange,
   onClearFilters,
   loading = false,
-  showAdvanced = true,
 }: PostFiltersProps) {
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   // Helper functions
   const updateFilter = (updates: Partial<FilterState>) => {
@@ -280,7 +276,7 @@ export function PostFilters({
             <div className="flex flex-wrap gap-2">
               {filterState.searchTerm && (
                 <Badge variant="secondary" className="gap-1">
-                  Search: "{filterState.searchTerm}"
+                  Search: &quot;{filterState.searchTerm}&quot;
                   <button
                     onClick={() => updateFilter({ searchTerm: '' })}
                     className="ml-1 hover:bg-secondary-foreground/20 rounded-full p-0.5"

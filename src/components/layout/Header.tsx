@@ -2,7 +2,6 @@
 
 import { useState, memo, useCallback, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { 
@@ -35,7 +34,6 @@ function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const router = useRouter();
 
   // Ensure component is mounted before adding interactive features
   useEffect(() => {
@@ -55,9 +53,7 @@ function Header() {
   }, []);
 
   // Handle search results from the modal - this can be empty since SearchModal handles navigation internally
-  const handleSearchResults = useCallback((results: TransformedPost[], searchTerm?: string) => {
-    // The enhanced SearchModal handles navigation internally
-    // This callback is mainly for compatibility
+  const handleSearchResults = useCallback((_results: TransformedPost[], _searchTerm?: string) => {
   }, []);
 
   // Keyboard shortcut for search (Ctrl+K / Cmd+K) - only after mount

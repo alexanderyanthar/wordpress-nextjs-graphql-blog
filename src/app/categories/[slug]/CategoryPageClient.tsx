@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { AlertTriangle, Loader2, Folder, FileText, Filter, Grid, List } from 'lucide-react';
 import PostCard from '@/components/posts/PostCard';
 import { CategoryBreadcrumb } from '@/components/categories/CategoryBreadcrumb';
+import { TransformedCategory } from '@/lib/graphql/transformers';
 
 interface CategoryPageClientProps {
   slug: string;
@@ -229,7 +230,7 @@ export function CategoryPageClient({ slug }: CategoryPageClientProps) {
 }
 
 interface CategorySidebarProps {
-  category: any; // Replace with your category type
+  category: TransformedCategory; // Replace with your category type
 }
 
 function CategorySidebar({ category }: CategorySidebarProps) {
